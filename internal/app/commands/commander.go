@@ -2,23 +2,23 @@ package commands
 
 import (
 	"fmt"
-	"github.com/Rustamchuk/botRustam/internal/service/product"
+	"github.com/Rustamchuk/botRustam/internal/speaking/phrases"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
 	"log"
 	"strings"
 )
 
-var commands map[string]func(c *Commander, inputMessage *tgbotapi.Message)
+var commands = map[string]func(c *Commander, inputMessage *tgbotapi.Message){}
 
 type Commander struct {
-	bot            *tgbotapi.BotAPI
-	productService *product.Service
+	bot    *tgbotapi.BotAPI
+	tongue *phrases.Service
 }
 
-func NewCommander(bot *tgbotapi.BotAPI, productService *product.Service) *Commander {
+func NewCommander(bot *tgbotapi.BotAPI, tongue *phrases.Service) *Commander {
 	return &Commander{
-		bot:            bot,
-		productService: productService,
+		bot:    bot,
+		tongue: tongue,
 	}
 }
 
@@ -44,14 +44,10 @@ func (c *Commander) ChooseMove(update *tgbotapi.Update) {
 		return
 	}
 
-	switch update.Message.Command() {
-	case "help":
-		c.Help(update.Message)
-	case "list":
-		c.List(update.Message)
-	case "get":
-		c.Get(update.Message)
-	default:
+	command, ok := commands[update.Message.Command()]
+	if ok {
+		command(c, update.Message)
+	} else {
 		c.Default(update.Message)
 	}
 }
