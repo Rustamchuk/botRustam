@@ -1,6 +1,7 @@
 package main
 
 import (
+	"github.com/Rustamchuk/botRustam/internal/service/product"
 	"log"
 	"os"
 
@@ -29,6 +30,8 @@ func main() {
 
 	updates := bot.GetUpdatesChan(u)
 
+	productService := product.NewService()
+
 	for update := range updates {
 		if update.Message == nil {
 			continue
@@ -39,14 +42,29 @@ func main() {
 		switch update.Message.Command() {
 		case "help":
 			helpCommand(bot, update.Message)
+		case "list":
+			listCommand(bot, update.Message, productService)
 		default:
 			defaultBehavior(bot, update.Message)
 		}
 	}
 }
 
+func listCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message, productService *product.Service) {
+	outMessage := "All products\n\n"
+	products := productService.List()
+	for _, p := range products {
+		outMessage += p.Title
+		outMessage += "\n"
+	}
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outMessage)
+	bot.Send(msg)
+}
+
 func helpCommand(bot *tgbotapi.BotAPI, inputMessage *tgbotapi.Message) {
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, "За помощью обращайся к настоящему Рустаму")
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID,
+		"/help - command list\n"+
+			"/list - product list")
 	bot.Send(msg)
 }
 
