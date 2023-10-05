@@ -36,12 +36,7 @@ func main() {
 	commander := commands.NewCommander(bot, productService)
 
 	for update := range updates {
-		if update.Message == nil {
-			continue
-		}
-
-		log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
-
+		//log.Printf("[%s] %s", update.Message.From.UserName, update.Message.Text)
 		commander.ChooseMove(&update)
 	}
 }

@@ -9,10 +9,14 @@ func (c *Commander) List(inputMessage *tgbotapi.Message) {
 		outMessage += p.Title
 		outMessage += "\n"
 	}
-	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outMessage)
-	c.bot.Send(msg)
-}
 
-func init() {
-	commands["list"] = (*Commander).List
+	msg := tgbotapi.NewMessage(inputMessage.Chat.ID, outMessage)
+
+	msg.ReplyMarkup = tgbotapi.NewInlineKeyboardMarkup(
+		tgbotapi.NewInlineKeyboardRow(
+			tgbotapi.NewInlineKeyboardButtonData("Next page", "list_10"),
+		),
+	)
+
+	c.bot.Send(msg)
 }
