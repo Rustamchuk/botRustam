@@ -4,17 +4,17 @@ import (
 	"github.com/Rustamchuk/botRustam/internal/app/commands"
 	"github.com/Rustamchuk/botRustam/internal/speaking/phrases"
 	tgbotapi "github.com/go-telegram-bot-api/telegram-bot-api/v5"
+	"github.com/joho/godotenv"
 	"log"
+	"os"
 )
 
-const TOKEN = "5970472266:AAGDeQx-uS-hXqgYKyu2pK8eo9qBpdg5C_8"
-
 func main() {
-	//godotenv.Load()
-	//
-	//token := os.Getenv("TOKEN")
+	godotenv.Load()
 
-	bot, err := tgbotapi.NewBotAPI(TOKEN)
+	token := os.Getenv("TOKEN")
+
+	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		log.Panic(err)
 	}
